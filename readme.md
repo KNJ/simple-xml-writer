@@ -26,7 +26,7 @@ $writer
     ->rewind()
     // Shift pointer to root
     ->addChild('url')
-    ->addChild('loc', 'https://dev.wazly.net/profile?cache=0&amp;rev=4')
+    ->addChild('loc', 'https://dev.wazly.net/profile?cache=0&rev=4')
     ->addChild('lastmod', date('Y-m-d', time()))
     ->addChild('image:image')
     ->addChild('image:loc', 'https://img.wazly.net/profile.jpg')
@@ -46,7 +46,7 @@ Output (prettified) :
         </image:image>
     </url>
     <url>
-        <loc>https://dev.wazly.net/profile</loc>
+        <loc>https://dev.wazly.net/profile?cache=0&amp;rev=4</loc>
         <lastmod>2020-02-20</lastmod>
         <image:image>
             <image:loc>https://img.wazly.net/profile.jpg</image:loc>
