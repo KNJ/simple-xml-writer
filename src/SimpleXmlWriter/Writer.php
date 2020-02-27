@@ -114,10 +114,11 @@ class Writer
      * @param  string|null  $value
      * @return \Wazly\SimpleXmlWriter\Writer
      */
-    public function addChild(string $name, string $value = null): Writer
+    public function addChild(string $name, string $value = null, array $attributes = []): Writer
     {
         $namespace = null;
         $colonPosition = strpos($name, ':');
+        $el = $this->pointer;
 
         if ($colonPosition !== false) {
             $key = substr($name, 0, $colonPosition);
@@ -137,8 +138,37 @@ class Writer
                 }
             }
 
-            $this->pointer->addChild($name, $value, $namespace);
+            $el = $this->pointer->addChild($name, $value, $namespace);
         }
+
+        $this->addAttributesTo($el, $attributes);
+
+        return $this;
+    }
+
+    /**
+     * Add an attribute to the element in the pointing position.
+     *
+     * @param  string  $name
+     * @param  string  $value
+     * @return \Wazly\SimpleXmlWriter\Writer
+     */
+    public function addAttribute(string $name, string $value): Writer
+    {
+        $this->addAttributesTo($this->pointer, [$name => $value]);
+
+        return $this;
+    }
+
+    /**
+     * Add attributes to the element in the pointing position.
+     *
+     * @param  array  $attributes
+     * @return \Wazly\SimpleXmlWriter\Writer
+     */
+    public function addAttributes(array $attributes): Writer
+    {
+        $this->addAttributesTo($this->pointer, $attributes);
 
         return $this;
     }
@@ -169,6 +199,28 @@ class Writer
 
         if (! $this->xml->asXML($filepath)) {
             throw new Exception('File cannot be output');
+        }
+    }
+
+    /**
+     * Add attributes to element.
+     *
+     * @param  \SimpleXMLElement  $element
+     * @param  array  $attributes
+     * @return void
+     */
+    protected function addAttributesTo(SimpleXMLElement $element, array $attributes): void
+    {
+        foreach ($attributes as $key => $value) {
+            $namespace = null;
+            $colonPosition = strpos($key, ':');
+
+            if ($colonPosition !== false) {
+                $namespaceAlias = substr($key, 0, $colonPosition);
+                $namespace = $this->namespaces[$namespaceAlias] ?? null;
+            }
+
+            $element->addAttribute($key, $value, $namespace);
         }
     }
 }
